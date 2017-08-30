@@ -9,8 +9,8 @@
  */
 
 function main() {
-  var calendarID   = "acc163@case.edu";
-  var hwCalendarID = "case.edu_vltkketjt9e3bihmd10pc4q7ec@group.calendar.google.com";
+  var calendarID   = "main_calendar_id";
+  var hwCalendarID = "homework_calendar_id";
   var form         = FormApp.getActiveForm();
   var allResponses = form.getResponses();
   
