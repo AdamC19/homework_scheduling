@@ -1,5 +1,8 @@
-// Copyright 2017 Adam Cordingley
-//
+/** Copyright 2017 Adam Cordingley
+ *
+ *  This code is provided as is. No guarantees.
+ *
+ */
 
 
 /**
@@ -9,8 +12,8 @@
  */
 
 function main() {
-  var calendarID   = "main_calendar_id";
-  var hwCalendarID = "homework_calendar_id";
+  var calendarID   = secrets.MAIN_CALENDAR_ID; // define in separate file
+  var hwCalendarID = secrets.HW_CALENDAR_ID;   // define in separate file
   var form         = FormApp.getActiveForm();
   var allResponses = form.getResponses();
   
@@ -86,10 +89,20 @@ function main() {
  */
 function makeDescrip(time, text, dets){
   try{  
-    return text+" is due today at "+time.getHours()+":"+time.getMinutes()+"\n\n"+dets;
+    return text+" is due today at "+formatTime(time)+"\n\n"+dets;//time.getHours()+":"+time.getMinutes()
   }catch(e){
     Logger.log(e);
     return "Homework is due today.\n\n";
   }
   
+}
+
+/**
+ * Formats a date using Java's SimpleDateFormat.
+ *
+ * @param {Date} time A javascript Date object.
+ * @return {String} a String representation of the time formatted correctly
+ */
+function formatTime(time){
+  return Utilities.formatDate(time, "America/New_York", "H:mm");
 }
