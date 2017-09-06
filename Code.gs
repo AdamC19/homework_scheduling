@@ -17,7 +17,6 @@ function main() {
   var form         = FormApp.getActiveForm();
   var allResponses = form.getResponses();
   
-  Logger.clear();
   //most recent response is appended to the end of the list
   
   try{
@@ -29,7 +28,6 @@ function main() {
     var class   = itemResponses[1].getResponse();
     var dueDate = itemResponses[2].getResponse();
     var details = itemResponses[3].getResponse();
-    Logger.log(descrip + " for " + class + " due: " + dueDate);
     
     //retrieve calendar
     
@@ -44,8 +42,6 @@ function main() {
     var events    = calendar.getEvents(startTime, 
                                        endTime, 
                                        {search: class.toString()}); //get array of events
-    
-    Logger.log(events.length+" events between ("+startTime+") and ("+endTime+")" );
     
     var event;
     
@@ -72,7 +68,9 @@ function main() {
     
     
   }catch(e){
-    Logger.log(e);
+    //Log to spreadsheet
+    logError(e);
+    
   }
   
   
@@ -91,7 +89,7 @@ function makeDescrip(time, text, dets){
   try{  
     return text+" is due today at "+formatTime(time)+"\n\n"+dets;//time.getHours()+":"+time.getMinutes()
   }catch(e){
-    Logger.log(e);
+    logError(e);
     return "Homework is due today.\n\n";
   }
   
@@ -105,4 +103,31 @@ function makeDescrip(time, text, dets){
  */
 function formatTime(time){
   return Utilities.formatDate(time, "America/New_York", "H:mm");
+}
+
+/**
+ * This method records the an error in a spreadsheet, on a sheet defined in a secrets object
+ *
+ * @param e {Error} the error to be logged in the spreadsheet
+ */
+function logError(e){
+  //indexed by row, then column
+  var time  = new Date();
+  var data  = [ [time.toString(), e.message(), e] ]; 
+  var ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = ss.getSheetByName(secrets.ERROR_SHEET_NAME);
+  
+  //Add data to spreadsheet
+  var row   = 1;
+  var col   = 1;
+  var nRows = 1;
+  var nCols = 3;
+  
+  while(sheet.getRange(row,col).getValue() !== ""){
+    row++;
+  }
+  
+  var range = sheet.getRange(row,col,nRows,nCols);
+  range.setValues(data);
+  
 }
